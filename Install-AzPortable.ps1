@@ -42,6 +42,6 @@ if ($CurrentPath -notlike "*$BinPath*") {
     Write-Host "AzureCLI\bin already in PATH → skipping." -ForegroundColor DarkYellow
 }
 
-Write-Host "`n✓ Portable Azure CLI installed."
+Write-Host "✓ Portable Azure CLI installed."
 Write-Host "✓ PATH updated (restart PowerShell if needed)."
-Write-Host "`nTest with: az version" -ForegroundColor Green
+Write-Host "Test with: az version" -ForegroundColor Green

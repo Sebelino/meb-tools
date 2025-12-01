@@ -44,4 +44,4 @@ if ($CurrentPath -notlike "*$BinPath*") {
 
 Write-Host "`n✓ Portable Azure CLI installed."
 Write-Host "✓ PATH updated (restart PowerShell if needed)."
-Write-Host "`nTest with: az version`" -ForegroundColor Green
+Write-Host "`nTest with: az version" -ForegroundColor Green

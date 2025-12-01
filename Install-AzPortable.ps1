@@ -1,47 +1,24 @@
-# Version to install
-$AzVersion = "2.66.0"
-$ZipUrl = "https://azurecliprod.blob.core.windows.net/msi/azure-cli-$AzVersion.zip"
+# Location of your pip-installed binaries
+$BinPath = "Z:\my_python_packages\bin"
+$AzExe = Join-Path $BinPath "az"
 
-# Paths
-$BaseDir = "$env:USERPROFILE\AzureCLI"
-$ZipPath = "$BaseDir\azure-cli.zip"
-$BinPath = "$BaseDir\bin"
+Write-Host "Checking for existing Azure CLI installation..." -ForegroundColor Cyan
 
-Write-Host "Installing Azure CLI portable into: $BaseDir" -ForegroundColor Cyan
-
-# Create base folder if missing
-if (-not (Test-Path $BaseDir)) {
-    New-Item -ItemType Directory -Path $BaseDir | Out-Null
-}
-
-# Download ZIP if not present or if forced refresh
-if (-not (Test-Path $ZipPath)) {
-    Write-Host "Downloading Azure CLI portable..." -ForegroundColor Yellow
-    Invoke-WebRequest -Uri $ZipUrl -OutFile $ZipPath
+if (Test-Path $AzExe) {
+    Write-Host "✓ Azure CLI already installed at $AzExe" -ForegroundColor Green
 } else {
-    Write-Host "Portable AZ ZIP already exists → skipping download." -ForegroundColor DarkYellow
+    Write-Host "Azure CLI not found. Installing via pip..." -ForegroundColor Yellow
+    pip install azure-cli
 }
 
-# Extract ZIP (always overwrite, stable across sessions)
-Write-Host "Extracting ZIP..." -ForegroundColor Yellow
-Expand-Archive -LiteralPath $ZipPath -DestinationPath $BaseDir -Force
-
-# Ensure bin directory exists
-if (-not (Test-Path $BinPath)) {
-    throw "ERROR: Expected 'bin' directory not found after extraction."
-}
-
-# Add bin folder to user PATH (idempotent)
+# Add bin folder to USER PATH if missing
 $CurrentPath = [Environment]::GetEnvironmentVariable("Path", "User")
 
 if ($CurrentPath -notlike "*$BinPath*") {
-    Write-Host "Adding AzureCLI\bin to USER PATH..." -ForegroundColor Yellow
-    $NewPath = "$CurrentPath;$BinPath"
-    [Environment]::SetEnvironmentVariable("Path", $NewPath, "User")
+    Write-Host "Adding $BinPath to USER PATH..." -ForegroundColor Yellow
+    [Environment]::SetEnvironmentVariable("Path", "$CurrentPath;$BinPath", "User")
 } else {
-    Write-Host "AzureCLI\bin already in PATH → skipping." -ForegroundColor DarkYellow
+    Write-Host "✓ $BinPath already in PATH" -ForegroundColor Green
 }
 
-Write-Host "✓ Portable Azure CLI installed."
-Write-Host "✓ PATH updated (restart PowerShell if needed)."
-Write-Host "Test with: az version" -ForegroundColor Green
+Write-Host "Done. Try: az version" -ForegroundColor Cyan
